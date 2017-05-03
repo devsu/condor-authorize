@@ -3,7 +3,6 @@ const path = require('path');
 const fse = Promise.promisifyAll(require('fs-extra'));
 
 const ACCESS_RULES_FILE_PATH = path.join(process.cwd(), 'access-rules.js');
-const ALTERNATIVE_RULES_FILE_PATH = path.join(process.cwd(), 'whatever.js');
 
 module.exports = class {
   createRulesFile() {
@@ -12,21 +11,8 @@ module.exports = class {
     return fse.writeFileAsync(ACCESS_RULES_FILE_PATH, content);
   }
 
-  createAlternativeRulesFile() {
-    this.rules = this.getSampleRules();
-    const content = `module.exports = ${JSON.stringify(this.rules)};`;
-    return fse.writeFileAsync(ALTERNATIVE_RULES_FILE_PATH, content);
-  }
-
-  removeMainRulesFile() {
+  removeRulesFile() {
     return fse.unlinkAsync(ACCESS_RULES_FILE_PATH);
-  }
-
-  removeRulesFiles() {
-    return Promise.any([
-      fse.unlinkAsync(ACCESS_RULES_FILE_PATH),
-      fse.unlinkAsync(ALTERNATIVE_RULES_FILE_PATH),
-    ]);
   }
 
   getSampleRules() {
@@ -46,6 +32,5 @@ module.exports = class {
 
   clearRequireCache() {
     delete require.cache[ACCESS_RULES_FILE_PATH];
-    delete require.cache[ALTERNATIVE_RULES_FILE_PATH];
   }
 };
